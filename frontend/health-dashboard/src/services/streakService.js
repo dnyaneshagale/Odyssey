@@ -1,32 +1,52 @@
-// Enhanced Streak Service for the new backend API
-const API_BASE_URL = 'http://localhost:5000/api';
+// Enhanced Streak Service for the new backend API with Clerk Authentication
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 class StreakService {
     constructor() {
-        this.userId = this.getUserId();
-        this.initializeUser();
+        this.getAuthToken = null; // Will be set by components using useAuth
     }
 
-    // Generate or retrieve user ID
-    getUserId() {
-        let userId = localStorage.getItem('streak_user_id');
-        if (!userId) {
-            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('streak_user_id', userId);
+    // Set the authentication token getter function (from Clerk)
+    setAuthTokenGetter(tokenGetter) {
+        this.getAuthToken = tokenGetter;
+    }
+
+    // Get authentication headers
+    async getAuthHeaders() {
+        const headers = { 'Content-Type': 'application/json' };
+        
+        if (this.getAuthToken) {
+            try {
+                const token = await this.getAuthToken();
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+            } catch (error) {
+                console.error('Error getting auth token:', error);
+            }
         }
-        return userId;
+        
+        return headers;
     }
 
-    // Initialize user in backend
+    // Initialize user in backend (called after login)
     async initializeUser() {
         try {
-            await fetch(`${API_BASE_URL}/users`, {
+            const headers = await this.getAuthHeaders();
+            const response = await fetch(`${API_BASE_URL}/users`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: this.userId })
+                headers
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            return result;
         } catch (error) {
-            console.log('User initialization failed (backend may be offline)');
+            console.error('User initialization failed:', error);
+            throw error;
         }
     }
 
@@ -35,11 +55,11 @@ class StreakService {
         try {
             console.log('Saving streak to backend:', { date, tasksCompleted, points });
             
+            const headers = await this.getAuthHeaders();
             const response = await fetch(`${API_BASE_URL}/streaks`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
-                    user_id: this.userId,
                     date: date,
                     tasks_completed: tasksCompleted,
                     points_earned: points,
@@ -77,7 +97,8 @@ class StreakService {
     // Load all streak data from backend
     async loadStreaks() {
         try {
-            const response = await fetch(`${API_BASE_URL}/streaks?user_id=${this.userId}`);
+            const headers = await this.getAuthHeaders();
+            const response = await fetch(`${API_BASE_URL}/streaks`, { headers });
             const result = await response.json();
             
             if (result.success) {
@@ -97,10 +118,10 @@ class StreakService {
     // Reset all streaks
     async resetStreaks() {
         try {
+            const headers = await this.getAuthHeaders();
             const response = await fetch(`${API_BASE_URL}/streaks/reset`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: this.userId })
+                headers
             });
 
             const result = await response.json();
@@ -121,7 +142,8 @@ class StreakService {
     // Export user data
     async exportData() {
         try {
-            const response = await fetch(`${API_BASE_URL}/streaks/export?user_id=${this.userId}`);
+            const headers = await this.getAuthHeaders();
+            const response = await fetch(`${API_BASE_URL}/streaks/export`, { headers });
             const result = await response.json();
             
             if (result.success !== undefined) {

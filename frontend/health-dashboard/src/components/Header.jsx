@@ -24,9 +24,11 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { UserButton, useUser } from '@clerk/clerk-react';
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
+  const { user } = useUser();
 
   return (
     <header className="w-full px-6 py-4 
@@ -41,18 +43,38 @@ const Header = () => {
         <span className="text-blue-600 dark:text-blue-400">Productions</span>
       </h1>
 
-      {/* Theme Toggle */}
-      <button
-        onClick={toggleTheme}
-        className="p-2 rounded-full 
-          bg-gray-200 dark:bg-gray-700 
-          hover:rotate-12 hover:scale-110 
-          transition-all duration-300 shadow-md"
-      >
-        {theme === 'dark' 
-          ? <Sun size={20} className="text-yellow-400" /> 
-          : <Moon size={20} className="text-gray-700" />}
-      </button>
+      {/* Right Side - Theme Toggle & User Button */}
+      <div className="flex items-center gap-4">
+        {/* User Greeting */}
+        {user && (
+          <span className="text-sm text-gray-600 dark:text-gray-300 hidden sm:block">
+            Hi, {user.firstName || user.username || 'there'}!
+          </span>
+        )}
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-full 
+            bg-gray-200 dark:bg-gray-700 
+            hover:rotate-12 hover:scale-110 
+            transition-all duration-300 shadow-md"
+        >
+          {theme === 'dark' 
+            ? <Sun size={20} className="text-yellow-400" /> 
+            : <Moon size={20} className="text-gray-700" />}
+        </button>
+
+        {/* Clerk User Button (includes logout) */}
+        <UserButton 
+          afterSignOutUrl="/sign-in"
+          appearance={{
+            elements: {
+              avatarBox: "w-10 h-10 rounded-full border-2 border-blue-500 hover:border-blue-600 transition-colors"
+            }
+          }}
+        />
+      </div>
     </header>
   );
 };

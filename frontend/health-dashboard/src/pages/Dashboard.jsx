@@ -173,8 +173,12 @@ const Dashboard = () => {
   </Link>
 
   {/* Note */}
-  <div className="relative mt-6 text-sm text-yellow-700 dark:text-yellow-400 animate-pulse">
-    App Under Active Development
+  <div className="relative text-2xl sm:text-3xl md:text-4xl 
+                font-semibold 
+                text-teal-700 dark:text-teal-300 
+                opacity-90 
+                mt-10 animate-fade-in">
+  Honesty Is The Best Policy
   </div>
 </div>
 

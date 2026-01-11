@@ -1,0 +1,135 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                   🔐 ENVIRONMENT VARIABLES                        ║
+║                        QUICK START GUIDE                          ║
+╚══════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────┐
+│  ✅ WHAT'S SECURED                                               │
+└──────────────────────────────────────────────────────────────────┘
+
+Frontend (.env.local):
+  ✓ VITE_CLERK_PUBLISHABLE_KEY  → Clerk auth key
+  ✓ VITE_API_BASE_URL            → Backend URL
+
+Backend (.env.local):
+  ✓ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY → Clerk public key
+  ✓ CLERK_SECRET_KEY                  → Clerk secret (sensitive!)
+  ✓ MONGODB_URI                       → MongoDB connection (sensitive!)
+  ✓ NEXT_PUBLIC_FRONTEND_URL          → Frontend URL
+
+┌──────────────────────────────────────────────────────────────────┐
+│  🚀 HOW TO RUN (Method 1: Automatic - Recommended)              │
+└──────────────────────────────────────────────────────────────────┘
+
+Step 1: Ensure .env.local files exist
+  → frontend/health-dashboard/.env.local ✓
+  → nextjs-backend/.env.local ✓
+
+Step 2: Start Backend (Terminal 1)
+  cd nextjs-backend
+  npm run dev
+  
+  ✅ Next.js auto-loads .env.local
+  ✅ Runs on: http://localhost:5000
+
+Step 3: Start Frontend (Terminal 2)
+  cd frontend/health-dashboard
+  npm run dev
+  
+  ✅ Vite auto-loads .env.local
+  ✅ Runs on: http://localhost:5174
+
+DONE! Environment variables are automatically loaded! 🎉
+
+┌──────────────────────────────────────────────────────────────────┐
+│  🔧 HOW TO RUN (Method 2: Manual Inline Variables)              │
+└──────────────────────────────────────────────────────────────────┘
+
+PowerShell:
+  # Backend
+  $env:NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."; `
+  $env:CLERK_SECRET_KEY="sk_test_..."; `
+  $env:MONGODB_URI="mongodb+srv://..."; `
+  npm run dev
+
+  # Frontend
+  $env:VITE_CLERK_PUBLISHABLE_KEY="pk_test_..."; `
+  $env:VITE_API_BASE_URL="http://localhost:5000/api"; `
+  npm run dev
+
+CMD:
+  # Backend
+  set CLERK_SECRET_KEY=sk_test_... && npm run dev
+
+  # Frontend
+  set VITE_API_BASE_URL=http://localhost:5000/api && npm run dev
+
+Linux/Mac:
+  # Backend
+  CLERK_SECRET_KEY="sk_test_..." npm run dev
+
+  # Frontend
+  VITE_API_BASE_URL="http://localhost:5000/api" npm run dev
+
+┌──────────────────────────────────────────────────────────────────┐
+│  📁 FILE STRUCTURE                                               │
+└──────────────────────────────────────────────────────────────────┘
+
+✅ SAFE FOR GIT (example files):
+  frontend/health-dashboard/.env.example
+  nextjs-backend/.env.example
+
+❌ NEVER COMMIT (real credentials):
+  frontend/health-dashboard/.env.local  ← Your actual keys
+  nextjs-backend/.env.local             ← Your actual keys
+
+🛡️ PROTECTED BY:
+  .gitignore (already configured)
+
+┌──────────────────────────────────────────────────────────────────┐
+│  🎯 FIRST TIME SETUP                                             │
+└──────────────────────────────────────────────────────────────────┘
+
+1. Copy example files:
+   copy frontend\health-dashboard\.env.example frontend\health-dashboard\.env.local
+   copy nextjs-backend\.env.example nextjs-backend\.env.local
+
+2. Edit .env.local files with your actual credentials
+
+3. Run the app:
+   Terminal 1: cd nextjs-backend && npm run dev
+   Terminal 2: cd frontend/health-dashboard && npm run dev
+
+4. Open: http://localhost:5174
+
+┌──────────────────────────────────────────────────────────────────┐
+│  🔍 VERIFY ENVIRONMENT VARIABLES ARE LOADED                      │
+└──────────────────────────────────────────────────────────────────┘
+
+Frontend (check browser console):
+  console.log('API:', import.meta.env.VITE_API_BASE_URL)
+  // Should show: http://localhost:5000/api
+
+Backend (check terminal output):
+  console.log('MongoDB:', process.env.MONGODB_URI?.substring(0, 20))
+  // Should show: mongodb+srv://team-...
+
+┌──────────────────────────────────────────────────────────────────┐
+│  ⚠️  IMPORTANT NOTES                                             │
+└──────────────────────────────────────────────────────────────────┘
+
+• Variables MUST start with VITE_ for frontend (Vite requirement)
+• Restart dev server after changing .env.local
+• .env.local is in .gitignore (safe, won't be committed)
+• Never share credentials via email/chat (use secure methods)
+• For production: Use platform env variable settings (Vercel, etc.)
+
+┌──────────────────────────────────────────────────────────────────┐
+│  📚 DETAILED DOCUMENTATION                                       │
+└──────────────────────────────────────────────────────────────────┘
+
+See: ENV_SETUP_GUIDE.md for complete documentation
+
+╔══════════════════════════════════════════════════════════════════╗
+║  ✅ Your credentials are now secure! Happy coding! 🚀           ║
+╚══════════════════════════════════════════════════════════════════╝
